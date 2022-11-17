@@ -14,6 +14,8 @@
       become_user: root
 
     - name: 'add custom homebrew repos'
+      tags:
+        - addbrewrepos
       community.general.homebrew_tap:
         name: [
           adoptopenjdk/openjdk,
@@ -69,6 +71,8 @@
         update_homebrew: yes
 
     - name: "Install from Mac app store"
+      tags:
+        - installappstoreapps
       shell: mas install {{ item }}
       with_items:
         - 497799835 # xcode
@@ -88,35 +92,93 @@
       shell: chsh -s $(which zsh) {{ lookup('env', 'USER') }}
       become: true
 
+    - name: Download zshrc
+      become: yes
+      tags:
+        - downloadconf
+      uri:
+        method: GET
+        follow_redirects: true
+        url: https://www.dropbox.com/s/5fobaj3p7g5uz9d/zshrc?dl=1
+        dest: /tmp/.zshrc
+      retries: 5
+
+    - name: Download karabiner configuration
+      become: yes
+      tags:
+        - downloadconf
+      uri:
+        method: GET
+        follow_redirects: true
+        url: https://www.dropbox.com/s/o60qxflm028n3k0/karabiner.json?dl=1
+        dest: /tmp/karabiner.json
+      retries: 5
+
+    - name: Download sublime-text keymap
+      become: yes
+      tags:
+        - downloadconf
+      uri:
+        method: GET
+        follow_redirects: true
+        url: https://www.dropbox.com/s/63tv3urrhfxbsih/sublime-keymap?dl=1
+        dest: /tmp/sublime-keymap
+      retries: 5
+
+    - name: Download sublime-text insertdate.py
+      become: yes
+      tags:
+        - downloadconf
+      uri:
+        method: GET
+        follow_redirects: true
+        url: https://www.dropbox.com/s/kvw6cr7ygyy8dp6/insertdate.py?dl=1
+        dest: /tmp/insertdate.py
+      retries: 5
+
     - name: "Create a default ZSH configuration"
+      become: yes
+      tags:
+        - applyconf
       template:
-        src: templates/zshrc_gopikrishna-a01.vmware.com
+        src: /tmp/.zshrc
         dest: /Users/{{ lookup('env', 'USER') }}/.zshrc
         owner: "{{ lookup('env', 'USER') }}"
         force: yes
 
     - name: "Copy default karabiner-elements configuration"
+      become: yes
+      tags:
+        - applyconf
       template:
-        src: templates/karabiner.json
+        src: /tmp/karabiner.json
         dest: /Users/{{ lookup('env', 'USER') }}/.config/karabiner/karabiner.json
         owner: "{{ lookup('env', 'USER') }}"
         force: yes
 
     - name: "Copy default sublime-text keymap"
+      become: yes
+      tags:
+        - applyconf
       template:
-        src: templates/sublime-keymap
+        src: /tmp/sublime-keymap
         dest: /Users/{{ lookup('env', 'USER') }}/Library/Application\ Support/Sublime\ Text\ 3/Packages/User/Default\ \(OSX\).sublime-keymap
         owner: "{{ lookup('env', 'USER') }}"
         force: yes
 
     - name: "Copy sublime-text script for insertdate"
+      become: yes
+      tags:
+        - applyconf
       template:
-        src: templates/insertdate.py
-        dest: /Users/{{ lookup('env', 'USER') }}/Library/Application\ Support/Sublime\ Text\ 3/Packages/User/insertdate.py
+        src: /tmp/insertdate.py
+        dest: /Users/{{ lookup('env', 'USER') }}/Library/Application Support/Sublime Text 3/Packages/User/insertdate.py
         owner: "{{ lookup('env', 'USER') }}"
         force: yes
 
     - name: "Install asdf plugins"
+      tags:
+        - installasdfplugins
       shell: |
         asdf plugin-add {{ item }} || exit 0
       with_items:
@@ -125,6 +187,8 @@
         - java
 
     - name: "Install Default Python"
+      tags:
+        - installdefaultpython
       shell: |
         asdf install python 3.10.0
         asdf global python 3.10.0

@@ -3,6 +3,14 @@
 This repository contains an Ansible configuration for setting up a Mac from scratch. It's primary purpose is setting up a new Mac from scratch, but I endeavor to also use it for adding new software as I go so that it remains up to date. At the moment it's being used for setting up M1 based Macs running MacOS Monterey.
 
 This is my (@gkns) version of the original scripts.
+My changes/customisations are:
+
+1. Added my applications.
+2. Install asdf through homebrew instead of git repo.
+3. Add my dotfile templates to dropbox and download them for the configuration
+4. Added a log (A simple tee) and made the ansible output verbose.
+5. Added instructions to test + dry-run changes.
+
 
 
 ## Getting Started
@@ -26,4 +34,10 @@ The easiest way to understand what's installed is to read the contents of `ansib
 ## Customising
 
 Everything can be customised by editing `ansible_osx.yml`.
+After customising you might want to run the below checks in the Testing section to verify the changes are okay.
 
+
+## Testing
+
+To check the playbook syntax : `ansible-playbook --syntax-check -i "localhost," -c local ansible_osx.yml`
+To check the playbook (Dry run) : `ansible-playbook --check -i "localhost," -c local ansible_osx.yml --ask-become-pass`

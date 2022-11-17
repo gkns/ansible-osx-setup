@@ -1,2 +1,2 @@
 #!/bin/sh
-ansible-playbook -i "localhost," -c local ansible_osx.yml --ask-become-pass
+ansible-playbook -vvv -i "localhost," -c local ansible_osx.yml --ask-become-pass | tee log.txt
