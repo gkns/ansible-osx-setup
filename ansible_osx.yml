@@ -53,6 +53,7 @@
           - meld
           - whatsapp
           - shottr
+          - flycut
 
     - name: "Install homebrew packages"
       community.general.homebrew:
@@ -62,6 +63,7 @@
           'openssl' ,
           'unzip',
           'zsh',
+          'asdf'
         ]
         state: present
         update_homebrew: yes
@@ -88,7 +90,7 @@
 
     - name: "Create a default ZSH configuration"
       template:
-        src: templates/.zshrc.j3
+        src: templates/zshrc_gopikrishna-a01.vmware.com
         dest: /Users/{{ lookup('env', 'USER') }}/.zshrc
         owner: "{{ lookup('env', 'USER') }}"
         force: yes
@@ -100,30 +102,30 @@
         owner: "{{ lookup('env', 'USER') }}"
         force: yes
 
-    - git:
-        repo: https://github.com/asdf-vm/asdf.git
-        dest: "/Users/{{ lookup('env', 'USER') }}/.asdf"
-        version: v0.8.1
-
-    - name: "Create a default asdf configuration"
+    - name: "Copy default sublime-text keymap"
       template:
-        src: templates/.asdfrc.j2
-        dest: /Users/{{ lookup('env', 'USER') }}/.asdfrc
+        src: templates/sublime-keymap
+        dest: /Users/{{ lookup('env', 'USER') }}/Library/Application\ Support/Sublime\ Text\ 3/Packages/User/Default\ \(OSX\).sublime-keymap
+        owner: "{{ lookup('env', 'USER') }}"
+        force: yes
+
+    - name: "Copy sublime-text script for insertdate"
+      template:
+        src: templates/insertdate.py
+        dest: /Users/{{ lookup('env', 'USER') }}/Library/Application\ Support/Sublime\ Text\ 3/Packages/User/insertdate.py
         owner: "{{ lookup('env', 'USER') }}"
         force: yes
 
     - name: "Install asdf plugins"
       shell: |
-        source /Users/{{ lookup('env', 'USER') }}/.asdf/asdf.sh
         asdf plugin-add {{ item }} || exit 0
       with_items:
         - nodejs
         - python
-      
+        - java
 
     - name: "Install Default Python"
       shell: |
-        source /Users/{{ lookup('env', 'USER') }}/.asdf/asdf.sh
         asdf install python 3.10.0
         asdf global python 3.10.0
         pip3 install ansible

@@ -468,7 +468,8 @@
                                             "com\\.microsoft\\.rdc\\.mac",
                                             "com\\.vmware\\.fusion",
                                             "com\\.nomachine\\.nxdock",
-                                            "com\\.vmware\\.horizon"
+                                            "com\\.vmware\\.horizon",
+                                            "com.googlecode.iterm2"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -496,7 +497,8 @@
                                             "com\\.microsoft\\.rdc\\.mac",
                                             "com\\.vmware\\.fusion",
                                             "com\\.nomachine\\.nxdock",
-                                            "com\\.vmware\\.horizon"
+                                            "com\\.vmware\\.horizon",
+                                            "com.googlecode.iterm2"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
