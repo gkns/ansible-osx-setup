@@ -30,6 +30,7 @@
       community.general.homebrew_cask:
         name: "{{ item }}"
       ignore_errors: yes
+      # Check https://formulae.brew.sh/cask/ for all installable casks
       with_items:
           - dropbox
           - firefox
