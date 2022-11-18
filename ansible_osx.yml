@@ -62,11 +62,13 @@
       community.general.homebrew:
         name: [
           'curl',
+          'wget',
           'mas',
           'openssl' ,
           'unzip',
           'zsh',
-          'asdf'
+          'asdf',
+          'iperf'
         ]
         state: present
         update_homebrew: yes
@@ -88,6 +90,11 @@
         path: /etc/shells
         line: "{{ zsh_path.stdout }}"
       become: true
+
+    - name: Install Oh My ZSH
+      shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+      args:
+        creates: "/Users/{{ lookup('env', 'USER') }}/.oh-my-zsh"
 
     - name: Set ZSH as the default shell
       shell: chsh -s $(which zsh) {{ lookup('env', 'USER') }}
@@ -137,6 +144,17 @@
         dest: /tmp/insertdate.py
       retries: 5
 
+    - name: Download .gitconfig 
+      become: yes
+      tags:
+        - downloadconf
+      uri:
+        method: GET
+        follow_redirects: true
+        url: https://www.dropbox.com/s/ibb6g6b1rigq15e/gitconfig?dl=1
+        dest: /tmp/gitconfig
+      retries: 5
+
     - name: "Create a default ZSH configuration"
       become: yes
       tags:
@@ -163,7 +181,7 @@
         - applyconf
       template:
         src: /tmp/sublime-keymap
-        dest: /Users/{{ lookup('env', 'USER') }}/Library/Application\ Support/Sublime\ Text\ 3/Packages/User/Default\ \(OSX\).sublime-keymap
+        dest: /Users/{{ lookup('env', 'USER') }}/Library/Application Support/Sublime Text 3/Packages/User/Default (OSX).sublime-keymap
         owner: "{{ lookup('env', 'USER') }}"
         force: yes
 
@@ -174,6 +192,16 @@
       template:
         src: /tmp/insertdate.py
         dest: /Users/{{ lookup('env', 'USER') }}/Library/Application Support/Sublime Text 3/Packages/User/insertdate.py
+        owner: "{{ lookup('env', 'USER') }}"
+        force: yes
+
+    - name: "Copy gitconfig"
+      become: yes
+      tags:
+        - applyconf
+      template:
+        src: /tmp/gitconfig
+        dest: /Users/{{ lookup('env', 'USER') }}/.gitconfig
         owner: "{{ lookup('env', 'USER') }}"
         force: yes
 
